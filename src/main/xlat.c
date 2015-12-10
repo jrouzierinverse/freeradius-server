@@ -1453,7 +1453,7 @@ int radius_xlat(char *out, int outlen, const char *fmt,
 				while (tmp && (freespace > 3)) {
 					if (tmp->attribute != PW_USER_PASSWORD) {
 						*q++ = '\t';
-						len = vp_prints(q, freespace - 2, tmp);
+						len = valuepair2str(q, freespace, tmp, PW_TYPE_STRING, func);
 						q += len;
 						freespace -= (len + 2);
 						*q++ = '\n';
@@ -1467,7 +1467,7 @@ int radius_xlat(char *out, int outlen, const char *fmt,
 				while (tmp && (freespace > 3)) {
 					if (tmp->attribute != PW_USER_PASSWORD) {
 						*q++ = '\t';
-						len = vp_prints(q, freespace - 2, tmp);
+						len = valuepair2str(q, freespace, tmp, PW_TYPE_STRING, func);
 						q += len;
 						freespace -= (len + 2);
 						*q++ = '\n';
