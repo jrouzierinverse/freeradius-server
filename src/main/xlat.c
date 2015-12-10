@@ -1462,6 +1462,20 @@ int radius_xlat(char *out, int outlen, const char *fmt,
 				}
 				p++;
 				break;
+			case 'z': /* Full reply pairs except password */
+				tmp = request->reply->vps;
+				while (tmp && (freespace > 3)) {
+					if (tmp->attribute != PW_USER_PASSWORD) {
+						*q++ = '\t';
+						len = vp_prints(q, freespace - 2, tmp);
+						q += len;
+						freespace -= (len + 2);
+						*q++ = '\n';
+					}
+					tmp = tmp->next;
+				}
+				p++;
+				break;
 			default:
 				RDEBUG2("WARNING: Unknown variable '%%%c': See 'doc/variables.txt'", *p);
 				if (freespace > 2) {
