@@ -72,9 +72,9 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 	char name[40];
 	int attr;
 	int type = PW_TYPE_OCTETS;
-	ATTR_FLAGS flags;
-	const DICT_ATTR *da;
-	DICT_VALUE *dv;
+	fr_dict_attr_flags_t flags;
+	const fr_dict_attr_t *da;
+	fr_dict_enum_t *dv;
 	char buf[1024];
 	char *a = NULL;
 	radius_packet_t *hdr = (radius_packet_t *)request->packet->data;
@@ -88,7 +88,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 	/*
 	 *	The "format" string is the attribute name.
 	 */
-	if (!(da = dict_attrbyname(fmt)))
+	if (!(da = fr_dict_attr_by_name(NULL, fmt)))
 		return 0;
 	strncpy(name, da->name, sizeof(name));
 	attr = da->attr;
@@ -155,7 +155,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 				} else if ((vendorcode == VENDORPEC_USR) &&
 						((ptr[4] == 0) && (ptr[5] == 0)) &&
 						(attrlen >= 8) &&
-						(dict_attrbyvalue((vendorcode << 16) | (ptr[6] << 8) | ptr[7], 0))) {
+						(fr_dict_attr_by_num(NULL, (vendorcode << 16) | (ptr[6] << 8) | ptr[7], 0))) {
 					attribute = ((vendorcode << 16) | (ptr[6] << 8) | ptr[7]);
 					ptr += 8;
 					attrlen -= 8;
@@ -196,7 +196,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 			if (attribute == PW_NAS_PORT)
 				a = (char *)strvalue;
 			else {
-               fr_prints(buf, sizeof(buf), strvalue, attrlen, 0);
+               fr_snprint(buf, sizeof(buf), (char *)strvalue, attrlen, 0);
 				a = buf;
 			}
 			break;
@@ -240,7 +240,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 					 *	Try to get the name for integer
 					 *	attributes.
 					 */
-					if ((dv = dict_valbyattr(attribute, 0, lvalue)))
+					if ((dv = fr_dict_enum_by_da(NULL, da, 0)))
 						a = dv->name;
 					else {
 						snprintf(buf, sizeof(buf), "%u", lvalue);
@@ -252,7 +252,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 					a = buf;
 				}
 			} else
-				a =(char *) ip_ntoa(buf, lvalue);
+                a = (char *) inet_ntop(AF_INET, &lvalue, buf, sizeof(buf));
 			break;
 
 		/*
@@ -263,7 +263,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 			if (attrlen != 8)
 				type = PW_TYPE_OCTETS;
 			else
-				a = ifid_ntoa(buf, sizeof(buf), strvalue);
+				a = (char *) fr_inet_ifid_pton((uint8_t *)buf, (const char *)strvalue);
 			break;
 
 		/*
@@ -292,10 +292,10 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 		a = buf;
 	}
 
-	strncpy(out, a?a:"UNKNOWN-TYPE", freespace);
-	DEBUG2("rlm_raw: %s = %s", name, out);
+	strncpy(*out, a?a:"UNKNOWN-TYPE", outlen);
+	DEBUG2("rlm_raw: %s = %s", name, *out);
 
-	return strlen(out);
+	return strlen(*out);
 }
 
 
