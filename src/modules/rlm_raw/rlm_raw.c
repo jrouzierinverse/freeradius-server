@@ -50,7 +50,7 @@ typedef struct rlm_raw_t {
  *	A mapping of configuration file names to internal variables.
  */
 static const CONF_PARSER mod_config[] = {
-	{ "name", FR_CONF_OFFSET(PW_TYPE_STRING, rlm_raw_t, name), "raw" },
+	{ FR_CONF_OFFSET("name", PW_TYPE_STRING, rlm_raw_t, name), .dflt = "raw" },
 	CONF_PARSER_TERMINATOR
 };
 
