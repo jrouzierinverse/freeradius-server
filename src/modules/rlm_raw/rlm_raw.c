@@ -58,7 +58,9 @@ static const CONF_PARSER mod_config[] = {
  *	Dynamically xlat for %{raw:...} out of the
  *	decoded RADIUS attributes of the raw packet.
  */
-static ssize_t raw_xlat(void *instance, REQUEST *request, char const *fmt, char *out, size_t freespace)
+static ssize_t raw_xlat(char **out, size_t outlen,
+			 UNUSED void const *mod_inst, UNUSED void const *xlat_inst,
+			 REQUEST *request, char const *fmt)
 {
 	uint8_t strvalue[MAX_STRING_LEN];
 	uint32_t lvalue;
