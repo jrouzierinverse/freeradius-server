@@ -305,15 +305,15 @@ static ssize_t raw_xlat(char **out, size_t outlen,
  *	to external databases, read configuration files, set up
  *	dictionary entries, etc.
  */
-static int mod_instantiate(CONF_SECTION *conf, void *instance)
+static int mod_instantiate(UNUSED CONF_SECTION *conf, UNUSED void *instance)
 {
 	return 0;
 }
 
-static int mod_bootstrap(CONF_SECTION *conf, void *instance)
+static int mod_bootstrap(UNUSED CONF_SECTION *conf, void *instance)
 {
 	rlm_raw_t *inst = instance;
-	xlat_register(inst->name, raw_xlat, NULL, inst); 
+	xlat_register(inst, inst->name, raw_xlat, NULL, NULL, 0, 0);
 	return 0;
 }
 
@@ -321,10 +321,8 @@ static int mod_bootstrap(CONF_SECTION *conf, void *instance)
  *	Only free memory we allocated.  The strings allocated via
  *	cf_section_parse() do not need to be freed.
  */
-static int mod_detach(void *instance)
+static int mod_detach(UNUSED void *instance)
 {
-	rlm_raw_t *inst = instance;
-	xlat_unregister(inst->name, raw_xlat, instance);
 	return 0;
 }
 
