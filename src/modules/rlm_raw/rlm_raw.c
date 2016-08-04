@@ -54,14 +54,6 @@ static const CONF_PARSER mod_config[] = {
 	CONF_PARSER_TERMINATOR
 };
 
-typedef struct radius_packet_t {
-	uint8_t code;
-	uint8_t id;
-	uint8_t length[2];
-	uint8_t vector[AUTH_VECTOR_LEN];
-	uint8_t data[1];
-} radius_packet_t;
-
 /*
  *	Dynamically xlat for %{raw:...} out of the
  *	decoded RADIUS attributes of the raw packet.
