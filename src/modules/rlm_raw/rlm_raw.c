@@ -62,7 +62,7 @@ static ssize_t raw_xlat(char **out, size_t outlen,
 			 UNUSED void const *mod_inst, UNUSED void const *xlat_inst,
 			 REQUEST *request, char const *fmt)
 {
-	uint8_t strvalue[MAX_STRING_LEN];
+	uint8_t strvalue[FR_MAX_STRING_LEN];
 	uint32_t lvalue;
 	uint32_t vendorcode = 0;
 	int attribute = 0;
